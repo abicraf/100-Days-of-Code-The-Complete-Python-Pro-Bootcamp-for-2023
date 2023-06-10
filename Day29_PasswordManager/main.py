@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 import random
 import pyperclip
+import json
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 #Password Generator Project
@@ -50,6 +51,26 @@ def password_generator():
     password_entry.insert(0, password)
     # print(f"Your password is: {password}")
 
+# ---------------------------- Search PASSWORD ------------------------------- #
+def find_password():
+    web_content = web_entry.get()
+    try:
+        with open("data.json", "r") as data_file:
+            data = json.load(data_file)
+            #print(data.keys())  # print out the keys in data dictionary
+            #print(data["jfowejif"])  # print out hte jfowejif key's value.
+    except FileNotFoundError:
+        messagebox.showinfo(title="No File", message="No Data File Found.")
+    else:
+        if web_content in data:
+            messagebox.showinfo(title=f'Search Result of {web_content}',
+                                message=f"Email: {data[web_content]['email']}\n"
+                                        f"Password: {data[web_content]['password']}")
+        else:
+            messagebox.showinfo(title=f'Search Result of {web_content}',
+                                message=f"No details for the {web_content} exists.")
+
+
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def save():
     # get the content in entries
@@ -57,21 +78,44 @@ def save():
     email_content = email_entry.get()
     password_content = password_entry.get()
 
+    # Day 30 practice, use JSON to search email and password
+    # create a dictionary type to manage data
+    new_data = {
+        web_content: {
+            "email": email_content,
+            "password": password_content,
+        }
+    }
+
+
     # check if the content is correct before saving information to the file
     if web_content == '' or password_content =='' or email_content =='':
         messagebox.showinfo(title='Oops', message="Don't leave any field empty!")
     else:
-        is_ok = messagebox.askokcancel(title="Please confirm",
-                                       message=f"Website:{web_content}\nEmail/User:{email_content}\n"
-                                               f"Password:{password_content}\n\n Is these correct?")
-        if is_ok:
-            # open a file and write the content
-            with open("password.txt", "a") as file:
-                # save the content in entries.
-                file.write(f"{web_content}  |  {email_content}  |  {password_content}\n")
-                # clear the content
-                web_entry.delete(0, END)
-                password_entry.delete(0, END)
+        # is_ok = messagebox.askokcancel(title="Please confirm",
+        #                                message=f"Website:{web_content}\nEmail/User:{email_content}\n"
+        #                                        f"Password:{password_content}\n\n Is these correct?")
+        # if is_ok:
+        #     # open a file and write the content
+        #     with open("password.txt", "a") as file:
+        #         # save the content in entries.
+        #         file.write(f"{web_content}  |  {email_content}  |  {password_content}\n")
+        #
+        # Day 30 practice, Use JSON to rephrace code above.
+        try:
+            with open("data.json", "r") as data_file:
+                data = json.load(data_file)
+        except FileNotFoundError:
+            with open("data.json", "w") as data_file:
+                json.dump(new_data, data_file, indent=4)
+        else:
+            data.update(new_data)
+            with open("data.json", "w") as data_file:
+                json.dump(data, data_file, indent=4)
+        finally:
+            # clear the content
+            web_entry.delete(0, END)
+            password_entry.delete(0, END)
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -96,11 +140,11 @@ password_label = Label(text='Password:')
 password_label.grid(row=3, column=0)
 
 # Entry
-web_entry = Entry(width=35)
-web_entry.grid(row=1, column=1, columnspan=2)
+web_entry = Entry(width=21)
+web_entry.grid(row=1, column=1)
 web_entry.focus()
 
-email_entry = Entry(width=35)
+email_entry = Entry(width=40)
 email_entry.grid(row=2, column=1, columnspan=2)
 email_entry.insert(0, "kay@gmail.com")
 
@@ -111,7 +155,10 @@ password_entry.grid(row=3, column=1)
 GenPassword_button = Button(text="Generate Password", width=15, command=password_generator)
 GenPassword_button.grid(row=3, column=2)
 
-Add_button = Button(text="Add", width=36, command=save)
+Add_button = Button(text="Add", width=38, command=save)
 Add_button.grid(row=4, column=1, columnspan=2)
+
+Search_button = Button(text="Search", width=15, command= find_password)
+Search_button.grid(row=1, column=2)
 
 window.mainloop()
