@@ -4,18 +4,22 @@ import pandas, random
 BACKGROUND_COLOR = "#B1DDC6"
 BLACK_COLOR = "#000000"
 current_card = {}
+flipped = False
 
-
-#--------------------------------- Step 2 - Create New Flash Cards ------------------------------------
 # Use pandas to read csv
 data = pandas.read_csv("./data/french_words.csv")
 df = data.to_dict(orient="records")
+
+
 # print(df)
 # print out: [{'French': 'partie', 'English': 'part'}, {'French': 'histoire', 'English': 'history'},
 
+# --------------------------------- Step 2 - Create New Flash Cards ------------------------------------
+
 # def a function shows random word on flash card
 def random_word():
-    global current_card, flip_timer
+    global current_card, flip_timer, flipped
+    flipped = False
     window.after_cancel(flip_timer)  # fix the bug about timer, 每翻一張卡就重新計算timer
     current_card = random.choice(df)
     canvas.itemconfig(canvas_image, image=ft_img)
@@ -23,16 +27,31 @@ def random_word():
     canvas.itemconfig(word_text, text=f"{current_card['French']}", fill='black')
     flip_timer = window.after(3000, flip_card)
 
+
 # ----------------------------------Step 3 Flip the card -------------------------------------
 
 def flip_card():
-    global current_card
+    global current_card, save_the_card, flipped
     canvas.itemconfig(canvas_image, image=bk_img)
     canvas.itemconfig(title_text, text=f"English", fill='white')
     canvas.itemconfig(word_text, text=f"{current_card['English']}", fill='white')
+    flipped = True
 
 
-#--------------------------------- Step 1 - Create UI -------------------------------------------------
+# --------------------------------- Step 4 - Save Progress ------------------------------------
+def save_progress():
+    global current_card, flipped
+    if flipped:
+        df.remove(current_card)
+        words_to_learn = pandas.DataFrame(df)
+        # print(words_to_learn)
+        #  If you don't want to create an index for the new csv,
+        #  you can set the index parameter to False.
+        words_to_learn.to_csv("./data/words_to_learn.csv", index=False)
+    random_word()
+
+
+# --------------------------------- Step 1 - Create UI -------------------------------------------------
 # create windows
 window = Tk()
 window.title("Flash Card")
@@ -52,14 +71,15 @@ word_text = canvas.create_text(400, 263, text="", fill=BLACK_COLOR, font=('Ariel
 
 # create buttons.
 right_image = PhotoImage(file="./images/right.png")
-right_button = Button(image=right_image, highlightthickness=0, highlightbackground=BACKGROUND_COLOR, command=random_word)
+right_button = Button(image=right_image, highlightthickness=0, highlightbackground=BACKGROUND_COLOR,
+                      command=save_progress)
 right_button.grid(row=1, column=1)
 
 wrong_image = PhotoImage(file="./images/wrong.png")
-wrong_button = Button(image=wrong_image, highlightthickness=0, highlightbackground=BACKGROUND_COLOR, command=random_word)
+wrong_button = Button(image=wrong_image, highlightthickness=0, highlightbackground=BACKGROUND_COLOR,
+                      command=random_word)
 wrong_button.grid(row=1, column=0)
 
 random_word()
-
 
 window.mainloop()
