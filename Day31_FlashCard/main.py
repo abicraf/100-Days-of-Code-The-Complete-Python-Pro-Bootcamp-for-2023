@@ -7,8 +7,17 @@ current_card = {}
 flipped = False
 
 # Use pandas to read csv
-data = pandas.read_csv("./data/french_words.csv")
-df = data.to_dict(orient="records")
+# 3. The next time the program is run, it should check if there is a words_to_learn.csv file.
+# If it exists, the program should use those words to put on the flashcards.
+# If the words_to_learn.csv does not exist (i.e., the first time the program is run),
+# then it should use the words in the french_words.csv
+try:
+    data = pandas.read_csv("./data/words_to_learn.csv")
+except FileNotFoundError:
+    original_data = pandas.read_csv("./data/french_words.csv")
+    df = original_data.to_dict(orient="records")
+else:
+    df = data.to_dict(orient="records")
 
 
 # print(df)
