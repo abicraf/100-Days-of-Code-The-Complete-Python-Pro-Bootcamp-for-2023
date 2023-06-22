@@ -51,9 +51,9 @@ MY_LATITUDE = TAIPEI_LATITUDE
 MY_LONGITUDE = TAIPEI_LONGTITUDE
 
 # send email when getting dark.
-my_email = "abicraf@gmail.com"
-password = "clerbmduqdiqcagz"
-sent_to_address = "coldwr@hotmail.com"
+my_email = "xxx@gmail.com"
+password = "xxx"
+sent_to_address = "xxx@hotmail.com"
 new_letter = "Look up the SKY!!!!"
 
 parameters = {
