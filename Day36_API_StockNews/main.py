@@ -34,8 +34,8 @@ def send_sms():
     print(message_content)
     client = Client(account_sid, AUTH_TOKEN)
     message = client.messages.create(
-        from_='xxx',
-        to='xxx',
+        from_='xxxx',
+        to='xxxx',
         body=message_content,
     )
     print(message.status)
@@ -54,16 +54,16 @@ close_price_before_yesterday = float(stock_data_value[1]['4. close'])
 # print(f"close rate Before Yesterday: {close_price_before_yesterday}")
 
 # Use abs() to get the absolute value
-diff_price = abs(close_price_yesterday - close_price_before_yesterday)
-diff_percentage = (diff_price/close_price_yesterday) * 100
+diff_price = close_price_yesterday - close_price_before_yesterday
+if diff_price < 0:
+    up_down = "Decrease"  #"🔻"
+else:
+    up_down = "Increase"  #"🔺"
+diff_percentage = (abs(diff_price)/close_price_yesterday) * 100
+# print(diff_percentage)
 if diff_percentage > 3:
-    #print(f"Get News. {STOCK} 🔺 3%.")
-    if close_price_yesterday > close_price_before_yesterday:
-        with open(f"{STOCK}.txt", mode='w') as stock_message:
-            stock_message.write(f"{STOCK} Increase 3%. :D\n\n")
-    elif close_price_yesterday < close_price_before_yesterday:
-        with open(f"{STOCK}.txt", mode='w') as stock_message:
-            stock_message.write(f"{STOCK} Decrease 3%. :( \n\n")
+    with open(f"{STOCK}.txt", mode='w') as stock_message:
+        stock_message.write(f"{STOCK} {up_down} 3%.\n\n")
     get_news()
     send_sms()
 
