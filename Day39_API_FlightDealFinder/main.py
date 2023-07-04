@@ -2,5 +2,7 @@
 # NotificationManager classes to achieve the program requirements.
 import requests
 from flight_search import FlightSearch
+from data_manager import DataManager
 
-FlightSearch()
+# FlightSearch()
+DataManager()
