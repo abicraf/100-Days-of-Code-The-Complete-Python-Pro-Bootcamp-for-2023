@@ -4,5 +4,9 @@ import requests
 from flight_search import FlightSearch
 from data_manager import DataManager
 
-# FlightSearch()
-DataManager()
+
+dm = DataManager()
+# print(dm.data)
+
+fs = FlightSearch(dm.data)
+print(fs.cheap_flight)
