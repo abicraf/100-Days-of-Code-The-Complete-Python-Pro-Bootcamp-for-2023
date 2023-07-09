@@ -1,7 +1,6 @@
 import requests, os
 from datetime import *
 from dateutil.relativedelta import relativedelta
-#from data_manager import DataManager
 
 FLIGHT_KEY = os.environ.get("FLIGHT_KEY")
 TEQUILA_SEARCH_ENDPOINT = "https://api.tequila.kiwi.com/v2/search"
@@ -12,7 +11,6 @@ class FlightSearch():
         self.cheap_flight = []
         sheet = data
         for index in range(0, len(sheet)):
-        # for index in range(0, 1):
             location = sheet[index]['iata_code']
             sheet_lowest_price = sheet[index]['lowest_price']
 
@@ -24,12 +22,7 @@ class FlightSearch():
 
             # Check for the flights from tomorrow to 6 months later.
             tomorrow = today + timedelta(days=1)
-            # print(tomorrow.day)
-
             six_month_later = today + relativedelta(months=+6)
-            # print(six_month_later.month)
-            #
-            # print(six_month_later.strftime("%d/%m/%Y"))
 
             search_parameters = {
                 "fly_from": "TPE",

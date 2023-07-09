@@ -6,7 +6,6 @@ from data_manager import DataManager
 
 
 dm = DataManager()
-# print(dm.data)
 
 fs = FlightSearch(dm.data)
 print(fs.cheap_flight)
