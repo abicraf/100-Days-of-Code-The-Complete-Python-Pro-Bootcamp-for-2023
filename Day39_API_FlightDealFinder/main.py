@@ -12,6 +12,15 @@ data_manager = DataManager()
 # search flight based on the condition
 flight_search = FlightSearch(data_manager.data)
 
+# if IATA code is empty in the sheet, use location query to search it based on the city name
+for index in range(0, len(data_manager.data)):
+    if flight_search.sheet[index]['iata_code'] == '':
+        iata_code = flight_search.search_location(index)
+        id = flight_search.sheet[index]['id']
+        # print(flight_search.sheet[index])
+        data_manager.put_iata(id, iata_code)
+
+flight_search.search_flight()
 # get the information from the result (flight json format)
 flight_data = FlightData(flight_search.cheap_flight)
 

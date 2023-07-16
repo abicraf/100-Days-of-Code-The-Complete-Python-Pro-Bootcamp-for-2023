@@ -4,16 +4,21 @@ from dateutil.relativedelta import relativedelta
 
 FLIGHT_KEY = os.environ.get("FLIGHT_KEY")
 TEQUILA_SEARCH_ENDPOINT = "https://api.tequila.kiwi.com/v2/search"
+TEQUILA_LOCATION_ENDPOINT = "https://api.tequila.kiwi.com/locations/query"
 DEPARTURE_CITY_ITA = 'TPE'
+
 
 class FlightSearch:
     # This class is responsible for talking to the Flight Search API.
     def __init__(self, data):
         self.cheap_flight = []
-        sheet = data
-        for index in range(0, len(sheet)):
-            location = sheet[index]['iata_code']
-            sheet_lowest_price = sheet[index]['lowest_price']
+        self.sheet = data
+
+    def search_flight(self):
+        # sheet = data
+        for index in range(0, len(self.sheet)):
+            location = self.sheet[index]['iata_code']
+            sheet_lowest_price = self.sheet[index]['lowest_price']
 
             search_header = {
                 "apikey": FLIGHT_KEY
@@ -43,7 +48,7 @@ class FlightSearch:
 
             response = requests.get(url=TEQUILA_SEARCH_ENDPOINT, params=search_parameters, headers=search_header)
             response_json = response.json()
-            # print(response_json["_results"])
+            # print(response_json)
             if response_json["_results"] > 0:
                 # print(response_json["data"][0]["price"])
                 current_lowest_price = response_json["data"][0]["price"]
@@ -51,3 +56,16 @@ class FlightSearch:
                     # print(
                     #     f"{location} current price is {current_lowest_price}, this is cheaper than the excel {sheet_lowest_price} ")
                     self.cheap_flight.append(response_json)
+    def search_location(self, index):
+        location_header = {
+            "apikey": "qoQPGtiRCf3cFczK7_zWK6tisgssJyHI",
+        }
+        location_parameters = {
+            "term": self.sheet[index]['city'],
+            "location_types": "city",
+        }
+        # print(self.sheet[index]['city'])
+        response = requests.get(url=TEQUILA_LOCATION_ENDPOINT, params=location_parameters, headers=location_header)
+        response_json = response.json()
+        return response_json['locations'][0]['code']
+        # print(response_json['locations'][0]['code'])
